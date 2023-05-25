@@ -1,0 +1,87 @@
+﻿<Window x:Class="sol.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:sol"
+        mc:Ignorable="d"
+        Title="Contact Manager" Height="800" Width="600"
+        MinHeight="500" MinWidth="500" >
+    <!--WindowStartupLocation="CenterScreen">-->
+    <Window.Resources>
+        <BitmapImage x:Key="ManAvatar" UriSource="/Resources/man.png" />
+        <BitmapImage x:Key="WomanAvatar" UriSource="/Resources/woman.jpg" />
+        <DataTemplate x:Key="ContactListItemTemplate" DataType="ListBoxItem">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" 
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label Content="{Binding Name}" FontSize="20" Padding="3,0,0,0" />
+                    <Label Content="{Binding Surname}" FontSize="20" Padding="3,0,0,0" />
+                </StackPanel>
+                <Border Grid.Column="2" VerticalAlignment="Center" Width="50" Height="50"
+                        BorderBrush="Black" BorderThickness="1" Margin="3">
+                    <Image Stretch="Fill">
+                        <Image.Style>
+                            <Style TargetType="{x:Type Image}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Gender}" Value="Male">
+                                        <Setter Property="Source" Value="{StaticResource ManAvatar}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Gender}" Value="Female">
+                                        <Setter Property="Source" Value="{StaticResource WomanAvatar}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </Border>
+            </Grid>
+        </DataTemplate>
+        <CollectionViewSource Source="{Binding}" x:Key="ContactsViewSource"/>
+        <Style x:Key="ContactListItemStyle" TargetType="ListBoxItem">
+            <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                    <Setter Property="Background" Value="#FFAFC5FF" />
+                </Trigger>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#FF75A1FF" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="Import" IsEnabled="True" Click="MenuItem_Import"/>
+                <MenuItem Header="Export" IsEnabled="True" Click="MenuItem_Export"/>
+                <Separator />
+                <MenuItem Header="Exit" Click="MenuItem_Exit"/>
+            </MenuItem>
+            <MenuItem Header="Contacts">
+                <MenuItem Header="Add contact" Click="MenuItem_AddContact"/>
+                <MenuItem Header="Clear contacts" Click="MenuItem_Clear"/>
+            </MenuItem>
+            <MenuItem Header="About" Click="MenuItem_About"/>
+        </Menu>
+        <TabControl Grid.Row="1">
+            <TabItem Header="List">
+                <ListBox ItemsSource="{Binding Source={StaticResource ResourceKey=ContactsViewSource}}"
+                         ItemTemplate="{StaticResource ContactListItemTemplate}"
+                         ItemContainerStyle="{StaticResource ContactListItemStyle}"
+                         AlternationCount="2"
+                         HorizontalContentAlignment="Stretch"/>
+            </TabItem>
+            <TabItem Header="Grid">
+                <DataGrid ItemsSource="{Binding}" AutoGenerateColumns="True" CanUserAddRows="True"/>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
